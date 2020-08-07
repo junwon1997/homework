@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head><!--숙제입니다-->
+    <!--숙제입니다-->
+    <!--숙제입니다-->
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <title>원페이지 쇼핑몰</title>
+    <link rel="stylesheet" type="text/css" href = "mstyle.css">
+    <style>
+        .full-contents{
+    width: 900px;
+    height: 700px;
+    margin:auto;
+    margin-top: 10px;
+    padding-top: 10px;
+    border: black ridge;
+
+}
+.card{
+    width:700px;
+    height:250px;
+    margin:auto;
+    border: black ridge;
+    background-image: url(https://www.kgc.co.kr/upload//upload_file/product/2017/11/09/340x3051.jpg);
+    background-size: 100% 100%;
+}
+.small-contents{
+    width: 750px;
+    padding-top: 10px;
+    margin: auto;
+}
+.small-contents2{
+    width: 750px;
+    margin: auto;
+}
+.medium-contents{
+     width: 750px;
+    height:270px;
+    padding-top: 10px;
+    margin: auto;
+}
+.text{
+    display: inline-block;
+    vertical-align: center;
+    text-align: center;
+    margin-left: 10px;
+}
+.small-box{
+     margin-left: 10px;
+}
+.card-text2{
+    color: blue;
+}
+    </style>
+    <script>
+        $(document).ready(function(){
+	        $.ajax({
+                    type: "GET",
+                    url: "https://api.manana.kr/exchange/rate.json",
+                    data: {},
+                    success: function(response){
+                     let number = response[1]['rate'];
+                     $('#number-text').text(number)
+                    }
+                    })
+              order_listing();
+        });
+        function order_listing() {
+              $.ajax({
+                    type: "GET",
+                    url: "/order",
+                    data: {},
+                    success: function(response){
+                     let orders = response['orders'];
+                     for(let i=0; i<orders.length;i++){
+                         let name = orders[i]['name'];
+                         let count = orders[i]['count'];
+                         let address = orders[i]['address'];
+                         let num = orders[i]['num'];
+
+                         let temp_html = `<tr>
+                                            <th scope="row">${name}</th>
+                                            <td>${count}</td>
+                                            <td>${address}</td>
+                                            <td>${num}</td>
+                                         </tr>`
+                         $('#order-table').append(temp_html);
+                     }
+                    }
+                    })
+
+        }
+        function order(){
+            let name = $('#order-name').val();
+            let count = $('#order-count').val();
+            let address = $('#order-address').val();
+            let number = $('#order-number').val();
+
+            if(name == ''){
+                alert('이름을 입력하세요');
+            }else if(count == ''){
+                 alert('수량을 입력하세요');
+            }else if(address == ''){
+                 alert('주소를 입력하세요');
+            }else if(number == ''){
+                 alert('번호을 입력하세요');
+            }
+            else{
+                 $.ajax({
+                    type: "post",
+                    url: "/order",
+                    data: {'name_give':name, 'count_give':count,'address_give':address,'num_give':num},
+                    success: function (response) {
+                        if (response["result"] == "success") {
+                            alert(response["msg"]);
+                            window.location.reload();
+                        }
+                    }
+                })
+            }
+        }
+
+
+    </script>
+
+</head>
+<body>
+<div class="full-contents">
+    <div class="card">
+    </div>
+    <div class="small-contents">
+        <div class="text"><h3>상품제목</h3></div>
+        <div class="text"><h6>가격:102,000원/120g</h6></div>
+        <p class="card-text">이 상품으로 말할 것 같으면 KGC 인삼공사 120년 전통의 노하우로 6년근 홍삼을 진하게 달여 다양한 홍삼 유효성분이 함유된 100% 홍삼농축액으로서 홍삼 본연의 맛과 향이 우수한 정관장 대표 홍삼 제품입니다. </p>
+        <p class="card-text2">달러-원 환율:<span id="number-text">1,000</span></p>
+    </div>
+ <div class="medium-contents">
+    <div class="small-box">
+        <h3>주문하기</h3>
+    </div>
+    <form>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">주문자성함</label>
+            <div class="col-sm-10">
+                <input id="order-name"type="text" class="form-control">
+            </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">수량</label>
+             <div class="col-sm-10">
+                <select id="order-count"class="custom-select">
+                <option selected> </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                </select>
+             </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">주소</label>
+            <div class="col-sm-10">
+                <input id="order-address"type="text" class="form-control">
+            </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">전화번호</label>
+            <div class="col-sm-10">
+                <input id="order-number"type="text" class="form-control">
+            </div>
+            </div>
+    </form>
+    <button onclick="order()" type="button" class="btn btn-outline-dark">주문하기</button>
+ </div>
+    <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">이름</th>
+      <th scope="col">수량</th>
+      <th scope="col">주소</th>
+      <th scope="col">전화번호</th>
+    </tr>
+  </thead>
+  <tbody id="order-table">
+  </tbody>
+</table>
+</div>
+</body>
+</html>
